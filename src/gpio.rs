@@ -120,4 +120,20 @@ impl Gpio {
             } */
         }
     }
+
+    pub fn read_level(&self) -> Gpio_Level {
+        unsafe {
+            #[cfg(target_arch = "avr")]
+            {
+                let pinb = read_volatile(self.pin_reg);
+                if (pinb & (1 << self.pin)) != 0 {
+                    return Gpio_Level::High;
+                } else {
+                    return Gpio_Level::Low;
+                }
+            }
+        }
+        return Gpio_Level::Low; // Dummy return
+    }
+
 }
