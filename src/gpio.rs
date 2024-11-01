@@ -78,6 +78,11 @@ impl Gpio {
         }
         Gpio { pin, pin_reg, ddr_reg, port_reg }
     }
+/* [CORRECTION GPIO] 
+    You could abstract even more your GPIO feature, by changing your function so the user don't have to specify the correct port (you calculate automatically the correct one from the provided pin)
+(Don't hesitate to remove this comment)
+*/
+
 
     pub fn set_mode(&self, mode: Gpio_Mode) {
         unsafe {
@@ -134,6 +139,11 @@ impl Gpio {
             }
         }
         return Gpio_Level::Low; // Dummy return
+/* [CORRECTION GPIO] 
+    Eventual improvment, you can use Options (ex : Some(Gpio_Level::High) or None) instead of Gpio_Level for the return type
+(Don't hesitate to remove this comment)
+*/
+
     }
 
 }
