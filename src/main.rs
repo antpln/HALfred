@@ -2,20 +2,20 @@
 #![no_main]
 use core::panic::PanicInfo;
 use cortex_m_rt::entry;
+use usart::Usart;
+mod usart;
+
 mod gpio;
-use gpio::*;
 
 #[entry]
 fn main() -> ! {
-    let gpio = Gpio::new(5, Atmega_Port::PortB);
-    gpio.set_mode(Gpio_Mode::Output);
-    gpio.set_level(Gpio_Level::High);
+    let mut usart = Usart::new();
+    usart.init(9600);
+
     loop {
-        for _ in 0..400000{
-            gpio.set_level(Gpio_Level::High);
-        }
-        for _ in 0..400000{
-            gpio.set_level(Gpio_Level::Low);
+        let message = b"Hello, USART! \n";
+        for &byte in message {
+            usart.transmit(byte);
         }
     }
 }
