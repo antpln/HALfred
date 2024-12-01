@@ -3,40 +3,31 @@
 
 use core::panic::PanicInfo;
 
-#[cfg(target_arch = "avr")]
-mod atmega328_usart;
+mod usart;
+use usart::Usart;
 
-#[cfg(target_arch = "arm")]
-mod cortex_m3_usart;
-
-#[cfg(target_arch = "avr")]
-use atmega328_usart::Usart;
-
-#[cfg(target_arch = "arm")]
-use cortex_m3_usart::Usart;
 
 #[no_mangle]
 pub extern "C" fn main() -> ! {
-    #[cfg(target_arch = "avr")]
-    Usart::init(9600);
+    let usart = Usart::new();
 
-    #[cfg(target_arch = "arm")]
-    Usart::init(9600, 16_000_000);
+    usart.init(9600);
+
 
     loop {
         // Envoi de "Hello World\n" caractère par caractère
         let message = b"Hello World\n";
         for &c in message {
-            Usart::send(c);
+            usart.transmit(c);
         }
     
         // Réception d'un caractère
-        let received = Usart::receive();
+        let received = Usart.receive();
         if received == b'H' {
             // Répondre "i\n"
             let response = b"i\n";
             for &c in response {
-                Usart::send(c);
+                usart.transmit(c);
             }
         }
     }

@@ -13,7 +13,6 @@ pub const PORTD: *mut u8 = 0x2B as *mut u8;
 pub const PIND: *mut u8 = 0x29 as *mut u8;
 
 #[repr(u8)]
-#[allow(dead_code)]
 pub enum GpioMode {
     Output = 0,
     Input = 1,
@@ -25,7 +24,6 @@ pub enum GpioLevel {
     High = 1,
 }
 
-#[allow(dead_code)]
 pub enum AtmegaPort {
     PortB,
     PortC,
@@ -34,7 +32,6 @@ pub enum AtmegaPort {
 
 pub struct Gpio {
     pin: u8,
-    #[allow(dead_code)]
     pin_reg: *mut u8,
     ddr_reg: *mut u8,
     port_reg: *mut u8,
