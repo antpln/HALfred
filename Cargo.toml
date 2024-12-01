@@ -3,9 +3,6 @@ name = "halfred"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-cortex-m-rt = "0.7.3"
-
 [profile.dev]
 panic ="abort"
 
@@ -14,3 +11,10 @@ panic ="abort"
 
 [profile.test]
 panic ="abort"
+
+[package.metadata.cortex-m-rt]
+memory = "memory.x"
+
+[features]
+avr = []
+arm = []
