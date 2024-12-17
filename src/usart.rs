@@ -28,6 +28,21 @@ const UART0_TXCTRL: *mut u32 = (UART0_BASE + 0x08) as *mut u32;
 const UART0_RXCTRL: *mut u32 = (UART0_BASE + 0x0C) as *mut u32;
 #[cfg(target_arch = "riscv32")]
 const UART0_DIV: *mut u32 = (UART0_BASE + 0x18) as *mut u32;
+/* [CORRECTION USART] 
+
+You could do something to remove those repetition, like a simple module for example :
+#[cfg(target_arch = "riscv32")]
+mod usart_register {
+    const UART0_BASE: u32 = 0x1001_3000;
+    const UART0_TXDATA: *mut u32 = (UART0_BASE + 0x00) as *mut u32;
+    const UART0_RXDATA: *mut u32 = (UART0_BASE + 0x04) as *mut u32;
+    const UART0_TXCTRL: *mut u32 = (UART0_BASE + 0x08) as *mut u32;
+    const UART0_RXCTRL: *mut u32 = (UART0_BASE + 0x0C) as *mut u32;
+    const UART0_DIV: *mut u32 = (UART0_BASE + 0x18) as *mut u32;
+}
+
+(Don't hesitate to remove this comment)
+*/
 
 pub struct Usart;
 
