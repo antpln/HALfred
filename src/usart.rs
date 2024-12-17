@@ -2,6 +2,7 @@
 #![no_main]
 use core::ptr;
 
+
 #[cfg(target_arch = "avr")]
 const UBRR0H: *mut u8 = 0xC5 as *mut u8;
 #[cfg(target_arch = "avr")]
@@ -49,6 +50,7 @@ impl Usart {
         #[cfg(target_arch = "riscv32")]
         {
             let div = (16000000 / baud_rate) as u32;
+            
             unsafe {
                 ptr::write_volatile(UART0_DIV, div);
                 ptr::write_volatile(UART0_TXCTRL, 1); // Enable TX
@@ -71,15 +73,17 @@ impl Usart {
     }
 
     pub fn receive(&self) -> u8 {
+        let mut a : u8 = 0;
         #[cfg(target_arch = "avr")]
         unsafe {
             while ptr::read_volatile(UCSR0A) & (1 << 7) == 0 {}
-            ptr::read_volatile(UDR0)
+            a = ptr::read_volatile(UDR0);
         }
         #[cfg(target_arch = "riscv32")]
         unsafe {
             while ptr::read_volatile(UART0_RXDATA) & 0x80000000 != 0 {}
-            ptr::read_volatile(UART0_RXDATA) as u8
+            a = ptr::read_volatile(UART0_RXDATA) as u8;
         }
+        return a;
     }
 }

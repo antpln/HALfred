@@ -12,9 +12,15 @@ panic ="abort"
 [profile.test]
 panic ="abort"
 
-[package.metadata.cortex-m-rt]
-memory = "memory.x"
+[target.riscv32imac-unknown-none-elf.dependencies]
+hifive1 = { version = "0.13.0", features = ["board-hifive1"] }
+panic-halt = "1.0.0"
+riscv = "0.12.1"
+riscv-rt = "0.13.0"
 
-[features]
-avr = []
-arm = []
+[target.avr-unknown-gnu-atmega328.dependencies]
+cortex-m-rt = "0.7.5"
+
+
+
+

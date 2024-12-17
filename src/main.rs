@@ -7,12 +7,34 @@ mod usart;
 use usart::Usart;
 
 
-#[no_mangle]
-pub extern "C" fn main() -> ! {
+
+
+#[cfg(target_arch = "avr")]
+use cortex_m_rt::entry;
+
+#[cfg(target_arch = "riscv32")]
+use riscv_rt::entry;
+
+#[cfg(target_arch = "riscv32")]
+extern crate panic_halt;
+
+#[cfg(target_arch = "riscv32")]
+#[entry]
+fn main() -> ! {
+    program();
+}
+
+#[cfg(target_arch = "avr")]
+#[entry]
+unsafe fn main() -> ! {
+    program();
+}
+
+
+pub fn program() -> ! {
     let usart = Usart::new();
 
     usart.init(9600);
-
 
     loop {
         // Envoi de "Hello World\n" caractère par caractère
@@ -20,26 +42,27 @@ pub extern "C" fn main() -> ! {
         for &c in message {
             usart.transmit(c);
         }
-    
-        // Réception d'un caractère
-        let received = Usart.receive();
-        if received == b'H' {
-            // Répondre "i\n"
-            let response = b"i\n";
-            for &c in response {
-                usart.transmit(c);
-            }
-        }
     }
 }
 
+#[cfg(target_arch = "riscv32")]
+#[no_mangle]
+#[link_section = ".trap"]
+pub fn _dispatch_core_interrupt() {
+    // Handle core interrupts here
+    loop {}
+}
+
+#[cfg(target_arch = "avr")]
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
-// cargo +nightly build -Z build-std=core --target avr-unknown-gnu-atmega328 --release
-// qemu-system-avr -M uno -bios halfred.elf -serial tcp::5678,server=on,wait=off
+// for sifive1
+//cargo build --target riscv32imac-unknown-none-elf --release
+//qemu-system-riscv32 -nographic -machine sifive_e -kernel target/riscv32imac-unknown-none-elf/release/halfred
 
-// cargo +nightly build -Z build-std=core --target thumbv7m-none-eabi --release
-// qemu-system-arm -M lm3s6965evb -kernel halfred -serial tcp::5678,server=on,wait=off
+// For atmega328p
+// cargo +nightly build -Z build-std=core --target avr-unknown-gnu-atmega328 --release
+// qemu-system-avr -M uno -bios target/avr-unknown-gnu-atmega328/release/halfred.elf -nographic
