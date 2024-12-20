@@ -50,6 +50,10 @@ mod hifive1 {
             // Enable SPI
             ptr::write_volatile(SPI_FCTRL as *mut u32, 0x01);
         }
+        /*
+        [CORRECTION SPI] (don't hesitate to remove this part)
+        It is great that you explicit every element like that.
+        */
     }
 
     pub fn spi_transmit(data: u8) -> u8 {
